@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: drone
+  namespace: drone
+  labels:
+    app: drone
+spec:
+  rules:
+  - host: drone.keithbartholomew.com
+    http:
+      paths:
+      - backend:
+          serviceName: drone
+          servicePort: 8000

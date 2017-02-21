@@ -1,0 +1,71 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: drone-server
+  namespace: drone
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: drone
+        role: server
+    spec:
+      containers:
+        - name: drone-server
+          image: drone/drone
+          env:
+            - name: DRONE_OPEN
+              value: 'true'
+            - name: DRONE_GITHUB
+              value: 'true'
+            - name: DRONE_GITHUB_CLIENT
+              value: 85826ac7023d4d0f29b2
+            - name: DRONE_GITHUB_SECRET
+              value: fafb0e98a3272d8fbde4738a76345e2a103c1e2b
+            - name: DRONE_SECRET
+              value: meow
+            - name: DRONE_ADMIN
+              value: ktbartholomew
+          volumeMounts:
+            - mountPath: /var/lib/drone
+              name: drone-data
+          ports:
+            - containerPort: 8000
+      volumes:
+        - name: drone-data
+          hostPath:
+            path: '/var/data/drone/drone-data'
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: drone-agent
+  namespace: drone
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: drone
+        role: agent
+    spec:
+      containers:
+        - name: drone
+          image: drone/drone
+          args:
+            - agent
+          env:
+            - name: DRONE_SERVER
+              value: ws://drone.drone.svc.cluster.local/ws/broker
+            - name: DRONE_SECRET
+              value: meow
+          volumeMounts:
+            - mountPath: /var/run/docker.sock
+              name: docker-socket
+          ports:
+            - containerPort: 8000
+      volumes:
+        - name: docker-socket
+          hostPath:
+            path: '/var/run/docker.sock'

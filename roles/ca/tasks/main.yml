@@ -1,0 +1,5 @@
+- name: create CA cert
+  shell: scripts/create_ca.sh
+  args:
+    creates: certs/ca/ca.pem
+  delegate_to: localhost

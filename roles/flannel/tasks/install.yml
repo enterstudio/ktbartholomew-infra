@@ -1,0 +1,33 @@
+- name: create {{ flannel.download_dest }}
+  file:
+    dest: "{{ flannel.download_dest }}"
+    state: directory
+  tags:
+    - install
+
+- name: download flannel binary
+  unarchive:
+    src: "{{ flannel.download_url }}"
+    dest: "{{ flannel.download_dest }}"
+    remote_src: yes
+    creates: "{{ flannel.download_dest }}/flannel-v{{ flannel_version }}-linux-amd64"
+  notify:
+    - flannel-install-bin
+  tags:
+    - install
+
+- name: install flannel binary
+  shell: |
+    cp {{ flannel.download_dest }}/flannel* /usr/bin/
+  args:
+    creates: /usr/bin/flanneld
+  become: yes
+
+- name: configure flannel network in etcd
+  shell: |
+    curl -XPUT \
+    --cacert /etc/tls/ca.pem \
+    -d 'value={{ flannel.network_config|to_json }}' \
+    {{ flannel.etcd_url }}/v2/keys/coreos.com/network/config
+  args:
+    warn: no

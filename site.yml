@@ -1,0 +1,13 @@
+- hosts: ca
+  roles:
+    - ca
+
+- hosts: etcd
+  roles:
+    - etcd
+
+- hosts: masters
+  roles:
+    - flannel
+    - docker
+    - master

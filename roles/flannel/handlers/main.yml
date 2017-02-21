@@ -1,0 +1,20 @@
+- name: restart-flannel
+  systemd:
+    daemon_reload: yes
+    name: flannel
+    state: restarted
+  become: yes
+
+- name: flannel-install-bin
+  shell: |
+    cp {{ flannel.download_dest }}/flannel* /usr/bin/
+  become: yes
+
+- name: configure flannel network in etcd
+  shell: |
+    curl -XPUT \
+    --cacert /etc/tls/ca.pem \
+    -d 'value={{ flannel.network_config|to_json }}' \
+    {{ flannel.etcd_url }}/v2/keys/coreos.com/network/config
+  args:
+    warn: no

@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: drone-agent
+  namespace: drone
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: drone
+        role: agent
+    spec:
+      containers:
+        - name: drone
+          image: drone/drone
+          args:
+            - agent
+          env:
+            - name: DRONE_SERVER
+              value: ws://drone.drone.svc.cluster.local/ws/broker
+            - name: DRONE_SECRET
+              value: meow
+          volumeMounts:
+            - mountPath: /var/run/docker.sock
+              name: docker-socket
+          ports:
+            - containerPort: 8000
+      volumes:
+        - name: docker-socket
+          hostPath:
+            path: '/var/run/docker.sock'

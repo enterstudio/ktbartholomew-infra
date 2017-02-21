@@ -1,0 +1,32 @@
+[Unit]
+Description=kubelet
+
+[Service]
+ExecStart=/usr/bin/docker run \
+  --rm \
+  --volume=/sys:/sys:rw \
+  --volume=/var/lib/docker/:/var/lib/docker:rw \
+  --volume=/var/lib/kubelet/:/var/lib/kubelet:rw,shared \
+  --volume=/etc/kubernetes/manifests:/etc/kubernetes/manifests:rw \
+  --volume=/var/run:/var/run:rw \
+  --volume=/etc/resolv.conf:/etc/resolv.conf \
+  --volume=/etc/tls:/etc/tls \
+  --net host \
+  --pid host \
+  --privileged \
+  --name kubelet \
+  gcr.io/google_containers/hyperkube-amd64:v{{ kubernetes.version }} \
+  /hyperkube kubelet \
+  --api-servers=http://127.0.0.1:8080 \
+  --register-schedulable=true \
+  --container-runtime=docker \
+  --allow-privileged=true \
+  --pod-manifest-path=/etc/kubernetes/manifests \
+  --hostname-override={{ ansible_default_ipv4.address }} \
+  --cluster_dns=10.3.73.3 \
+  --cluster_domain=cluster.local
+  Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

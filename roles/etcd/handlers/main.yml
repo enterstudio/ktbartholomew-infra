@@ -1,0 +1,14 @@
+- name: etcd-reload-restart
+  systemd:
+    daemon_reload: yes
+    name: etcd
+    state: restarted
+  become: yes
+
+- name: etcd-install-bin
+  shell: |
+    systemctl stop etcd && \
+    cp {{ etcd.download_dest }}/etcd-v{{ etcd_version }}-linux-amd64/etcd* /usr/bin/
+  become: yes
+  notify:
+    - etcd-reload-restart
