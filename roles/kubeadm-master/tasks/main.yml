@@ -1,0 +1,6 @@
+- name: Generate kubeadm token
+  command: kubeadm token generate
+  register: kubeadm_token
+  args:
+    creates: /etc/kubernetes/kubelet.conf
+  notify: save token to local file

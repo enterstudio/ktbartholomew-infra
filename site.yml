@@ -1,13 +1,13 @@
-- hosts: ca
+- hosts: all
   roles:
-    - ca
+    - kubeadm-common
 
-- hosts: etcd
+- hosts: master
   roles:
-    - etcd
+    - kubeadm-master
 
-- hosts: masters
+- hosts: nodes
+  vars:
+    kubeadm_token: "{{ lookup('file', 'token') }}"
   roles:
-    - flannel
-    - docker
-    - master
+    - kubeadm-node

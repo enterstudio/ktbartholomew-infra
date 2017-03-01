@@ -1,0 +1,15 @@
+- name: Add apt.kubernetes.io GPG key
+  get_url:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    dest: /etc/apt/trusted.gpg.d/kubernetes.gpg
+  become: yes
+- name: Add apt.kubernetes.io repo
+  copy:
+    src: kubernetes.list
+    dest: /etc/apt/sources.list.d/kubernetes.list
+  become: yes
+  notify: apt update
+- name: Install kubeadm and requirements
+  apt:
+    name: docker.io,kubelet,kubeadm,kubectl,kubernetes-cni
+  become: yes

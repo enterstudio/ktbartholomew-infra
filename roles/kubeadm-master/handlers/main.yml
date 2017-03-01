@@ -1,0 +1,25 @@
+- name: save token to local file
+  shell: echo "{{ kubeadm_token.stdout }}" > token
+  delegate_to: localhost
+  notify: Run kubeadm init
+
+- name: Run kubeadm init
+  command: kubeadm init --token {{ kubeadm_token.stdout }}
+  args:
+    creates: /etc/kubernetes/kubelet.conf
+  become: yes
+  notify: Install weave
+
+- name: Install weave
+  command: kubectl apply -f https://git.io/weave-kube
+  become: yes
+  notify: remove dedicated master taint
+
+- name: remove dedicated master taint
+  command: kubectl taint nodes --all dedicated-
+  become: yes
+  notify: Install kubernetes-dashboard
+
+- name: Install kubernetes-dashboard
+  command: kubectl create -f https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml
+  become: yes
