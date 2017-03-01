@@ -4,7 +4,9 @@
   notify: Run kubeadm init
 
 - name: Run kubeadm init
-  command: kubeadm init --token {{ kubeadm_token.stdout }}
+  command: |
+    kubeadm init \
+    --token {{ kubeadm_token.stdout }}
   args:
     creates: /etc/kubernetes/kubelet.conf
   become: yes

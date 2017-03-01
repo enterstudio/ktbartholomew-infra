@@ -1,0 +1,7 @@
+- name: apply ingress-controller.yml
+  command: kubectl apply -f /etc/kubernetes/manifests/ingress-controller.yml
+  become: yes
+
+- name: apply kubernetes-dashboard.yml
+  command: kubectl apply -f /etc/kubernetes/manifests/kubernetes-dashboard.yml
+  become: yes

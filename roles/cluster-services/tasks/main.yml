@@ -1,0 +1,13 @@
+- name: copy ingress-controller.yml
+  copy:
+    src: ingress-controller.yml
+    dest: /etc/kubernetes/manifests/ingress-controller.yml
+  become: yes
+  notify: apply ingress-controller.yml
+
+- name: download kubernetes-dashboard.yml
+  get_url:
+    url: https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml
+    dest: /etc/kubernetes/manifests/kubernetes-dashboard.yml
+  become: yes
+  notify: apply kubernetes-dashboard.yml

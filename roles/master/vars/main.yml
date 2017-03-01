@@ -1,8 +1,0 @@
-kubernetes:
-  version: 1.5.2
-  master_host: 10.240.0.2
-  master_host_internal: 10.3.73.2
-  dns_ip: 10.3.73.3
-  service_cidr: 10.3.73.1/24
-  pod_cidr: 10.3.73.1/24
-etcd_host: 10.240.0.2
